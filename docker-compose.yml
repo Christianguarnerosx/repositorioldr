@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: repositorio-app
+    container_name: repositorio-app
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel
+
+  web:
+    image: nginx:alpine
+    container_name: repositorio-web
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+  db:
+    image: mysql:8.0
+    container_name: repositorio-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: repositorio
+      MYSQL_USER: adminrepo
+      MYSQL_PASSWORD: passrepo
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - laravel
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+    - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: adminrepo
+      PMA_PASSWORD: passrepo
+    networks:
+    - laravel
+
+volumes:
+  db-data:
+
+networks:
+  laravel:
+    driver: bridge
