@@ -82,9 +82,13 @@ class DepartmentController extends Controller
                 'company_id' => 'required|exists:companies,id',
             ]);
             $department->update($validated);
-            return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
+            return redirect()
+                ->route('departments.index')
+                ->with('success', 'Department updated successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('departments.index')->with('error', 'Failed to update department. ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to update department. ' . $e->getMessage());
         }
     }
 
@@ -95,13 +99,17 @@ class DepartmentController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') && $department->areas()->count() > 0) {
+            if (!$request->has('confirm') || $department->areas()->count() > 0) {
                 return back()->with('warning', "This department has {$department->areas()->count()} areas. Confirm to delete.");
             }
             $department->delete();
-            return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
+            return redirect()
+                ->route('departments.index')
+                ->with('success', 'Department deleted successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('departments.index')->with('error', 'Failed to delete department. ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to delete department. ' . $e->getMessage());
         }
     }
 }

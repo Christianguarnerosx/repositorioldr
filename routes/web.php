@@ -17,11 +17,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::resource('Companies', CompanyController::class);
-    Route::resource('Departments', DepartmentController::class);
-    Route::resource('Areas', AreaController::class);
-    Route::resource('Folders', FolderController::class);
-    Route::resource('Documents', DocumentController::class);
+    Route::resource('companies', CompanyController::class);
+    Route::resource('departments', DepartmentController::class);
+    Route::resource('areas', AreaController::class);
+    Route::resource('folders', FolderController::class);
+    Route::resource('documents', DocumentController::class);
 });
 
 require __DIR__ . '/settings.php';

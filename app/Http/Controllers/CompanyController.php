@@ -86,7 +86,7 @@ class CompanyController extends Controller
                 ->with('success', 'Company updated successfully.');
         } catch (\Exception $e) {
             return redirect()
-                ->route('companies.index')
+                ->back()
                 ->with('error', 'Failed to update company.' . $e->getMessage());
         }
     }
@@ -98,7 +98,7 @@ class CompanyController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') && $company->departments->count() > 0) {
+            if (!$request->has('confirm') || $company->departments->count() > 0) {
                 return back()->with('warning', "This company has {$company->departments->count()} departments. asociated with it. if you delete it, you will also delete all the departments associated with it.");
             }
             $company->delete();
@@ -107,7 +107,7 @@ class CompanyController extends Controller
                 ->with('success', 'Company deleted successfully.');
         } catch (\Exception $e) {
             return redirect()
-                ->route('companies.index')
+                ->back()
                 ->with('error', 'Failed to delete company.' . $e->getMessage());
         }
     }

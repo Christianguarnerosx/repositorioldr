@@ -25,8 +25,9 @@ class FolderController extends Controller
     public function create()
     {
         // devolver una vista de creación
-        $areas = Area::all();
-        $folders = Folder::all(); // Opcional: para seleccionar carpeta padre
+        $areas = Area::select('id', 'name')->get();
+        $folders = Folder::select('id', 'name')->get(); // Opcional: para seleccionar carpeta padre
+
         return Inertia::render('Folders/Create', [
             'areas' => $areas,
             'folders' => $folders,
@@ -72,10 +73,11 @@ class FolderController extends Controller
     public function edit(Folder $folder)
     {
         // devolver una vista de edición
-        $areas = Area::all();
-        $folders = Folder::where('id', '!=', $folder->id)->get(); // Evitar self-reference
+        $areas = Area::select('id', 'name')->get();
+        $folders = Folder::select('id', 'name')->get();
+
         return Inertia::render('Folders/Edit', [
-            'folder' => $folder,
+            'folder' => $folder->load(['area', 'parentFolder']),
             'areas' => $areas,
             'folders' => $folders,
         ]);
@@ -93,11 +95,14 @@ class FolderController extends Controller
                 'area_id' => 'required|exists:areas,id',
                 'parent_folder_id' => 'nullable|exists:folders,id',
             ]);
+            
             $folder->update($validated);
-            return redirect()->route('folders.index')
+            return redirect()
+                ->route('folders.index')
                 ->with('success', 'Folder updated successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('folders.index')
+            return redirect()
+                ->back()
                 ->with('error', 'Failed to update folder: ' . $e->getMessage());
         }
     }
@@ -109,17 +114,17 @@ class FolderController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') && ($folder->documents()->count() > 0 || $folder->childFolders()->count() > 0)) {
+            if (!$request->has('confirm') || ($folder->documents()->count() > 0 || $folder->childFolders()->count() > 0)) {
                 $message = "This folder has {$folder->documents()->count()} documents and {$folder->childFolders()->count()} subfolders. They will also be deleted.";
-                $folder->documents()->delete();
-                $folder->childFolders()->delete();
                 return back()->with('warning', $message);
             }
             $folder->delete();
-            return redirect()->route('folders.index')
+            return redirect()
+                ->route('folders.index')
                 ->with('success', 'Folder deleted successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('folders.index')
+            return redirect()
+                ->back()
                 ->with('error', 'Failed to delete folder: ' . $e->getMessage());
         }
     }

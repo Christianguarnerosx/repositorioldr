@@ -41,3 +41,18 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+// ------------------------------------------------------------------------------ Tipos para el proyject
+
+// El tipado de tipescript para un objeto para companies
+export interface Company {
+    id: number;
+    name: string;
+}
+
+export interface pageProps {
+    companies: {
+        data: Company[];
+    };
+    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
+}

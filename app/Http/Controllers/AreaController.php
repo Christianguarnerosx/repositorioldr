@@ -66,7 +66,10 @@ class AreaController extends Controller
     {
         // devolver una vista de edición
         $departments = Department::all();
-        return Inertia::render('Areas/Edit', ['area' => $area, 'departments' => $departments]);
+        return Inertia::render('Areas/Edit', [
+            'area' => $area,
+            'departments' => $departments
+        ]);
     }
 
     /**
@@ -81,9 +84,13 @@ class AreaController extends Controller
                 'department_id' => 'required|exists:departments,id',
             ]);
             $area->update($validated);
-            return redirect()->route('areas.index')->with('success', 'Area updated successfully.');
+            return redirect()
+                ->route('areas.index')
+                ->with('success', 'Area updated successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('areas.index')->with('error', 'Failed to update area. ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to update area. ' . $e->getMessage());
         }
     }
 
@@ -98,9 +105,13 @@ class AreaController extends Controller
                 return back()->with('warning', "This area has {$area->folders()->count()} folders. Confirm to delete.");
             }
             $area->delete();
-            return redirect()->route('areas.index')->with('success', 'Area deleted successfully.');
+            return redirect()
+                ->route('areas.index')
+                ->with('success', 'Area deleted successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('areas.index')->with('error', 'Failed to delete area. ' . $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to delete area. ' . $e->getMessage());
         }
     }
 }

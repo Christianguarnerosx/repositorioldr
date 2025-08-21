@@ -95,10 +95,12 @@ class DocumentController extends Controller
             $validated['area_id'] = Folder::find($validated['folder_id'])->area_id;
 
             $document->update($validated);
-            return redirect()->route('documents.index')
+            return redirect()
+                ->route('documents.index')
                 ->with('success', 'Document updated successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('documents.index')
+            return redirect()
+                ->back()
                 ->with('error', 'Failed to update document: ' . $e->getMessage());
         }
     }
@@ -106,15 +108,20 @@ class DocumentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Document $document)
+    public function destroy(Request $request, Document $document)
     {
         // Eliminar un registro
         try {
+            if (!$request->has('confirm')) {
+                return back()->with('warning', "This document will be deleted. Confirm to delete.");
+            }
             $document->delete();
-            return redirect()->route('documents.index')
+            return redirect()
+                ->route('documents.index')
                 ->with('success', 'Document deleted successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('documents.index')
+            return redirect()
+                ->back()
                 ->with('error', 'Failed to delete document: ' . $e->getMessage());
         }
     }
