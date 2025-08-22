@@ -15,6 +15,16 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = Department::with('company')->paginate(10);
+
+        //mapeamos cada departamento para obtener el nombre de la compañia
+        $departments->getCollection()->transform(function ($department) {
+            return [
+                'id' => $department->id,
+                'name' => $department->name,
+                'company_name' => $department->company?->name ?? 'N/A',
+            ];
+        });
+
         return Inertia::render('Departments/Index', ['departments' => $departments]);
     }
 

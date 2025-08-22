@@ -1,28 +1,32 @@
-import CompaniesTable from '@/components/ui/data-table';
 import AppLayout from '@/layouts/app-layout';
-import { pageProps, type BreadcrumbItem } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { DataTable } from '@/components/ui/data-table';
+import { pageProps, type BreadcrumbItem, Company } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Companies', href: '/companies' }];
 
+const columns: ColumnDef<Company>[] = [
+    {
+        accessorKey: 'id',
+        header: 'ID',
+    },
+    {
+        accessorKey: 'name',
+        header: 'Name',
+    },
+];
+
 export default function Index() {
     const { companies } = usePage<pageProps>().props;
-
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this company?')) {
-            router.delete(`/companies/${id}`);
-        }
-    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Companies" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <h1>Companies</h1>
-
-                <CompaniesTable companies={companies.data} handleDelete={handleDelete} />
+                <DataTable columns={columns} data={companies.data} />
             </div>
         </AppLayout>
     );
 }
-

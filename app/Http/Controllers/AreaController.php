@@ -14,8 +14,17 @@ class AreaController extends Controller
      */
     public function index()
     {
-        // devolver una vista de edición
         $areas = Area::with('department')->paginate(10);
+
+        //mapeamos cada departamento para obtener el nombre de la compañia
+        $areas->getCollection()->transform(function ($area) {
+            return [
+                'id' => $area->id,
+                'name' => $area->name,
+                'department_name' => $area->department?->name ?? 'N/A',
+            ];
+        });
+
         return Inertia::render('Areas/Index', ['areas' => $areas]);
     }
 

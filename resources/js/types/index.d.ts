@@ -56,3 +56,32 @@ export interface pageProps {
     };
     [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
 }
+
+// El tipado de tipescript para un objeto para departments o direcciones
+export interface Department {
+    id: number;
+    name: string;
+    company_id: number;
+}
+
+export interface pageProps {
+    departments: {
+        data: Department[];
+    };
+    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
+}
+
+// El tipado de tipescript para un objeto para areas
+export interface Area {
+    id: number;
+    name: string;
+    company_id: number;
+}
+
+export interface pageProps {
+    areas: {
+        data: Area[];
+    };
+    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
+}
+
