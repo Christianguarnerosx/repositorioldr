@@ -50,25 +50,11 @@ export interface Company {
     name: string;
 }
 
-export interface pageProps {
-    companies: {
-        data: Company[];
-    };
-    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
-}
-
 // El tipado de tipescript para un objeto para departments o direcciones
 export interface Department {
     id: number;
     name: string;
     company_id: number;
-}
-
-export interface pageProps {
-    departments: {
-        data: Department[];
-    };
-    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
 }
 
 // El tipado de tipescript para un objeto para areas
@@ -78,10 +64,29 @@ export interface Area {
     company_id: number;
 }
 
-export interface pageProps {
-    areas: {
-        data: Area[];
-    };
-    [key: string]: unknown; // obliga a hacer una validacion de que es un objeto permite tener propiedades dinamicas
+//Para la paginacion
+export interface PaginationLinks {
+    url: string | null;
+    label: string;
+    active: boolean;
 }
 
+export interface PaginateData<T> {
+    data: T[];
+    current_page: number;
+    from: number;
+    to: number;
+    total: number;
+    per_page: number;
+    last_page: number;
+    links: PaginationLinks[];
+}
+
+// PageProps para Inertia, siempre abajo de las interfaces principales
+export interface pageProps {
+    companies: PaginateData<Company>;
+    areas: PaginateData<Area>;
+    departments: PaginateData<Department>;
+
+    [key: string]: unknown;
+}
