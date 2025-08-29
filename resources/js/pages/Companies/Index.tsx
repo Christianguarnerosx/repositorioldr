@@ -2,9 +2,9 @@ import AppLayout from '@/layouts/app-layout';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
 import { pageProps, type BreadcrumbItem, Company } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Empresas', href: '/companies' }];
 
@@ -54,7 +54,18 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Empresas" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <h1>Empresas</h1>
+                <div className='flex items-center justify-between'>
+                    <h1 className='text-1xl'>Empresas</h1>
+                    <Link href={route('companies.create')}>
+                    <Button
+                        variant="default"
+                        size="sm"
+                        className="rounded-md"
+                    >
+                        <Plus className="h-4 w-4" /> Add Company
+                    </Button>
+                    </Link>
+                </div>
                 <DataTable
                     columns={columns}
                     data={companies.data}

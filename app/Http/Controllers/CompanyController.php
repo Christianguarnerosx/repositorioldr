@@ -98,9 +98,9 @@ class CompanyController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') || $company->departments->count() > 0) {
-                return back()->with('warning', "This company has {$company->departments->count()} departments. asociated with it. if you delete it, you will also delete all the departments associated with it.");
-            }
+            // if (!$request->has('confirm') || $company->departments->count() > 0) {
+            //     return back()->with('warning', "This company has {$company->departments->count()} departments. asociated with it. if you delete it, you will also delete all the departments associated with it.");
+            // }
             $company->delete();
             return redirect()
                 ->route('companies.index')

@@ -109,9 +109,9 @@ class DepartmentController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') || $department->areas()->count() > 0) {
-                return back()->with('warning', "This department has {$department->areas()->count()} areas. Confirm to delete.");
-            }
+            // if (!$request->has('confirm') || $department->areas()->count() > 0) {
+            //     return back()->with('warning', "This department has {$department->areas()->count()} areas. Confirm to delete.");
+            // }
             $department->delete();
             return redirect()
                 ->route('departments.index')
