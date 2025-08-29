@@ -15,7 +15,7 @@ class FolderController extends Controller
     public function index()
     {
         // devolver una vista de edición
-        $folders = Folder::with('area')->paginate(10);
+        $folders = Folder::with('area')->paginate(9);
         return Inertia::render('Folders/Index', ['folders' => $folders]);
     }
 
@@ -95,7 +95,7 @@ class FolderController extends Controller
                 'area_id' => 'required|exists:areas,id',
                 'parent_folder_id' => 'nullable|exists:folders,id',
             ]);
-            
+
             $folder->update($validated);
             return redirect()
                 ->route('folders.index')

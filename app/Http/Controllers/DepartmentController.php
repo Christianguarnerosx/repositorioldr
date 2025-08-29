@@ -14,7 +14,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::with('company')->paginate(10);
+        $departments = Department::with('company')->paginate(9);
 
         //mapeamos cada departamento para obtener el nombre de la compañia
         $departments->getCollection()->transform(function ($department) {

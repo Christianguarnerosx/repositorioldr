@@ -14,7 +14,7 @@ class AreaController extends Controller
      */
     public function index()
     {
-        $areas = Area::with('department')->paginate(10);
+        $areas = Area::with('department')->paginate(9);
 
         //mapeamos cada departamento para obtener el nombre de la compañia
         $areas->getCollection()->transform(function ($area) {
