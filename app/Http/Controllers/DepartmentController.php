@@ -44,7 +44,6 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         // Guardar los datos
-        try {
             $validated = $request->validate([
                 'name' => 'required|string|max:100',
                 'company_id' => 'required|exists:companies,id',
@@ -53,11 +52,7 @@ class DepartmentController extends Controller
             return redirect()
                 ->route('departments.index')
                 ->with('success', 'Department created successfully.');
-        } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->with('error', 'Failed to create department. ' . $e->getMessage());
-        }
+        
     }
 
     /**

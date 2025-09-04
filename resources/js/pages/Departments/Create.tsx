@@ -1,11 +1,17 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import AppLayout from "@/layouts/app-layout";
+import { Button } from "@/components/ui/button";
+import { BreadcrumbItem } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import { Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface CreateProps {
+    companies: { id: number; name: string }[];
+}
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,16 +24,28 @@ const breadcrumbs: BreadcrumbItem[] = [
     }
 ];
 
-export default function Create() {
+export default function Create({ companies }: CreateProps) {
 
     //hook useform: utilidad que ayuda a gestionar el estado de un formulario, enviar datos al controlador y manejar las respuestas
     const { data, setData, post, processing, errors } = useForm({
         name: '',
+        company_id: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('departments.store'));
+        post(route('departments.store'), {
+            onError: (errors) => {
+                console.log("❌ Errores desde Inertia:", errors);
+            },
+            onSuccess: () => {
+                console.log("✅ Insertado con éxito");
+            },
+            onFinish: () => {
+                console.log("🔄 Finalizó la request");
+            }
+        }
+        );
     }
 
     const handleCancel = () => {
@@ -59,23 +77,47 @@ export default function Create() {
                                         autoFocus
                                         onChange={(e) => setData('name', e.target.value)}
                                         disabled={processing}
-                                    >
-                                        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-                                    </Input>
+                                    />
+                                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+
+
+                                    <div className="flex flex-col gap-1 mt-4">
+                                        <Label htmlFor="company_id">Company</Label>
+                                        <Select
+                                            value={data.company_id}
+                                            onValueChange={(value) => setData('company_id', value)}
+                                            disabled={processing}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a company" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {companies.map((c: CreateProps['companies'][number]) => (
+                                                    <SelectItem key={c.id} value={String(c.id)}>
+                                                        {c.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.company_id && (
+                                            <p className="text-red-500 text-sm">{errors.company_id}</p>
+                                        )}
+                                    </div>
+
                                 </div>
                             </CardContent>
                             <CardFooter className="mt-4 flex justify-end">
                                 <Button
                                     className="mr-5"
-                                    type="button"
-                                    variant="outline"
+                                    type='button'
+                                    variant='outline'
                                     onClick={handleCancel}
                                 >
                                     Cancelar
                                 </Button>
 
                                 <Button
-                                    type="submit"
+                                    type='submit'
                                     disabled={processing}
                                 >
                                     {processing ? (
@@ -91,7 +133,7 @@ export default function Create() {
                         </form>
                     </Card>
                 </div>
-            </AppLayout >
-        </div >
+            </AppLayout>
+        </div>
     )
 }
