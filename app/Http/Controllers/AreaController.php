@@ -110,9 +110,9 @@ class AreaController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') && $area->folders()->count() > 0) {
-                return back()->with('warning', "This area has {$area->folders()->count()} folders. Confirm to delete.");
-            }
+            // if (!$request->has('confirm') && $area->folders()->count() > 0) {
+            //     return back()->with('warning', "This area has {$area->folders()->count()} folders. Confirm to delete.");
+            // }
             $area->delete();
             return redirect()
                 ->route('areas.index')

@@ -47,7 +47,7 @@ export default function Index() {
                         size="sm"
                         onClick={() => handleDelete(department.id)}
                     >
-                        <Trash2 className="h-4 w-4 text-white" />
+                        <Trash2 className="h-4 w-4" />
                     </Button>
                 )
             }
