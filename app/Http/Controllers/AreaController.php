@@ -34,8 +34,13 @@ class AreaController extends Controller
     public function create()
     {
         // devolver una vista de edición
+        $companies = \App\Models\Company::all();
         $departments = Department::all();
-        return Inertia::render('Areas/Create', ['departments' => $departments]);
+
+        return Inertia::render('Areas/Create', [
+            'companies' => $companies,
+            'departments' => $departments
+        ]);
     }
 
     /**

@@ -8,9 +8,20 @@ import { Head, router, useForm } from "@inertiajs/react";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+interface Company {
+    id: number;
+    name: string;
+}
+
+interface Department {
+    id: number;
+    name: string;
+    company_id: number;
+}
 
 interface CreateProps {
-    departments: { id: number; name: string }[];
+    companies: Company[];
+    departments: Department[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -25,11 +36,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 
-export default function Create({ departments }: CreateProps) {
-
+export default function Create({ companies, departments }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        department_id: '',
+        company_id: "",
+        department_id: "",
+        name: "", // aquí escribes el área
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -41,10 +52,8 @@ export default function Create({ departments }: CreateProps) {
             },
             onFinish: () => {
                 console.log("🔄 Finalizó la request");
-
             }
-        }
-        );
+        });
     }
 
     const handleCancel = () => {
@@ -57,6 +66,11 @@ export default function Create({ departments }: CreateProps) {
         router.visit(route('areas.index'))
     }
 
+    //Filtrar departamentos segun la empresa
+    const filteredDepartments = departments.filter(
+        (d) => String(d.company_id) === data.company_id
+    );
+
     return (
         <div>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -68,41 +82,72 @@ export default function Create({ departments }: CreateProps) {
                         <form onSubmit={handleSubmit}>
                             <CardHeader>Informacion de la area</CardHeader>
                             <CardContent className="flex flex-col gap-4">
-                                <div className="flex flex-col gap-1">
-                                    <Label className="mt-5" htmlFor="name">Name</Label>
+                                {/* Seleccion de empresa */}
+                                <div className="flex flex-col gap-1 mt-5">
+                                    <Label htmlFor="company_id">Empresa</Label>
+                                    <Select
+                                        value={data.company_id}
+                                        onValueChange={(value) => {
+                                            setData("company_id", value);
+                                            setData("department_id", "");
+                                        }}
+                                        disabled={processing}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecciona una empresa"></SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {companies.map((c) => (
+                                                <SelectItem key={c.id} value={String(c.id)}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.company_id && (
+                                        <p className="text-red-500 text-sm">{errors.company_id}</p>
+                                    )}
+                                </div>
+
+                                {/* Seleccion de departamento */}
+                                <div className="flex flex-col gap-1 mt-3">
+                                    <Label htmlFor="department_id">Departamento</Label>
+                                    <Select
+                                        value={data.department_id}
+                                        onValueChange={(value) => setData("department_id", value)}
+                                        disabled={!data.company_id || processing}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecciona un departamento" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {filteredDepartments.map((d) => (
+                                                <SelectItem key={d.id} value={String(d.id)}>
+                                                    {d.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.department_id && (
+                                        <p className="text-red-500 text-sm">
+                                            {errors.department_id}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Area */}
+                                <div className="flex flex-col gap-1 mt-3">
+                                    <Label htmlFor="name">Area</Label>
                                     <Input
                                         id="name"
                                         value={data.name}
                                         autoFocus
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        disabled={processing}
+                                        onChange={(e) => setData("name", e.target.value)}
+                                        disabled={!data.department_id || processing}
                                     />
-                                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-
-
-                                    <div className="flex flex-col gap-1 mt-4">
-                                        <Label htmlFor="company_id">Department</Label>
-                                        <Select
-                                            value={data.department_id}
-                                            onValueChange={(value) => setData('department_id', value)}
-                                            disabled={processing}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a company" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {departments.map((c: CreateProps['departments'][number]) => (
-                                                    <SelectItem key={c.id} value={String(c.id)}>
-                                                        {c.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.department_id && (
-                                            <p className="text-red-500 text-sm">{errors.department_id}</p>
-                                        )}
-                                    </div>
-
+                                    {errors.name && (
+                                        <p className="text-sm text-red-500">{errors.name}</p>
+                                    )}
                                 </div>
                             </CardContent>
                             <CardFooter className="mt-4 flex justify-end">
@@ -132,7 +177,7 @@ export default function Create({ departments }: CreateProps) {
                         </form>
                     </Card>
                 </div>
-            </AppLayout>
-        </div>
+            </AppLayout >
+        </div >
     )
 }
