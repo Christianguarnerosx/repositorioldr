@@ -15,7 +15,17 @@ class FolderController extends Controller
     public function index()
     {
         // devolver una vista de edición
-        $folders = Folder::with('area')->paginate(9);
+        $folders = Folder::with(['area', 'parentFolder'])->paginate(9);
+
+        $folders->getCollection()->transform(function ($folder) {
+            return [
+                'id' => $folder->id,
+                'name' => $folder->name,
+                'area_name' => $folder->area?->name ?? 'N/A',
+                'parent_folder_name' => $folder->parentFolder?->name ?? 'Ninguno', // <--- aquí
+            ];
+        });
+
         return Inertia::render('Folders/Index', ['folders' => $folders]);
     }
 
@@ -26,7 +36,7 @@ class FolderController extends Controller
     {
         // devolver una vista de creación
         $areas = Area::select('id', 'name')->get();
-        $folders = Folder::select('id', 'name')->get(); // Opcional: para seleccionar carpeta padre
+        $folders = Folder::select('id', 'name', 'parent_folder_id', 'area_id')->get(); // Opcional: para seleccionar carpeta padre
 
         return Inertia::render('Folders/Create', [
             'areas' => $areas,
@@ -74,7 +84,7 @@ class FolderController extends Controller
     {
         // devolver una vista de edición
         $areas = Area::select('id', 'name')->get();
-        $folders = Folder::select('id', 'name')->get();
+        $folders = Folder::select('id', 'name', 'parent_folder_id', 'area_id')->get();
 
         return Inertia::render('Folders/Edit', [
             'folder' => $folder->load(['area', 'parentFolder']),
@@ -92,7 +102,7 @@ class FolderController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:100',
-                'area_id' => 'required|exists:areas,id',
+                'area_id' => 'nullable|exists:areas,id',
                 'parent_folder_id' => 'nullable|exists:folders,id',
             ]);
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('parent_folder_id')->nullable()->constrained('folders')->cascadeOnDelete();
-            $table->foreignId('area_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('area_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

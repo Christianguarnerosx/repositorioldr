@@ -29,4 +29,9 @@ class Folder extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
 }

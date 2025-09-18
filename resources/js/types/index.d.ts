@@ -64,6 +64,13 @@ export interface Area {
     company_id: number;
 }
 
+export interface Folder {
+    id: number;
+    name: string;
+    area_name?: string;            // opcional, si quieres mostrar el nombre del área
+    parent_folder_name?: string;   // opcional, para mostrar el folder padre
+}
+
 //Para la paginacion
 export interface PaginationLinks {
     url: string | null;
@@ -87,6 +94,7 @@ export interface pageProps {
     companies: PaginateData<Company>;
     areas: PaginateData<Area>;
     departments: PaginateData<Department>;
+    folders: PaginateData<Folder>;   // <-- aquí agregamos folders
 
     [key: string]: unknown;
 }

@@ -143,6 +143,7 @@ export default function Create({ companies, departments }: CreateProps) {
                                         value={data.name}
                                         autoFocus
                                         onChange={(e) => setData("name", e.target.value)}
+                                        placeholder="Escribe el nombre de la area"
                                         disabled={!data.department_id || processing}
                                     />
                                     {errors.name && (
