@@ -69,6 +69,28 @@ export default function Create({ companies }: CreateProps) {
                         <form onSubmit={handleSubmit}>
                             <CardHeader>Informacion del departamento</CardHeader>
                             <CardContent className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-1 mt-4">
+                                    <Label htmlFor="company_id">Company</Label>
+                                    <Select
+                                        value={data.company_id}
+                                        onValueChange={(value) => setData('company_id', value)}
+                                        disabled={processing}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a company" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {companies.map((c: CreateProps['companies'][number]) => (
+                                                <SelectItem key={c.id} value={String(c.id)}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.company_id && (
+                                        <p className="text-red-500 text-sm">{errors.company_id}</p>
+                                    )}
+                                </div>
                                 <div className="flex flex-col gap-1">
                                     <Label className="mt-5" htmlFor="name">Name</Label>
                                     <Input
@@ -79,31 +101,6 @@ export default function Create({ companies }: CreateProps) {
                                         disabled={processing}
                                     />
                                     {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
-
-
-                                    <div className="flex flex-col gap-1 mt-4">
-                                        <Label htmlFor="company_id">Company</Label>
-                                        <Select
-                                            value={data.company_id}
-                                            onValueChange={(value) => setData('company_id', value)}
-                                            disabled={processing}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a company" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {companies.map((c: CreateProps['companies'][number]) => (
-                                                    <SelectItem key={c.id} value={String(c.id)}>
-                                                        {c.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.company_id && (
-                                            <p className="text-red-500 text-sm">{errors.company_id}</p>
-                                        )}
-                                    </div>
-
                                 </div>
                             </CardContent>
                             <CardFooter className="mt-4 flex justify-end">
