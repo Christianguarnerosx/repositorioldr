@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Folder;
 use App\Models\Area;
+use App\Models\Company;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -35,10 +37,14 @@ class FolderController extends Controller
     public function create()
     {
         // devolver una vista de creación
-        $areas = Area::select('id', 'name')->get();
+        $companies = Company::select('id', 'name')->get();
+        $departments = Department::select('id', 'name', 'company_id')->get();
+        $areas = Area::select('id', 'name', 'department_id')->get();
         $folders = Folder::select('id', 'name', 'parent_folder_id', 'area_id')->get(); // Opcional: para seleccionar carpeta padre
 
         return Inertia::render('Folders/Create', [
+            'companies' => $companies,
+            'departments' => $departments,
             'areas' => $areas,
             'folders' => $folders,
         ]);

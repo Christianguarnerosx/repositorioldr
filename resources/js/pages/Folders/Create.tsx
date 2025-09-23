@@ -8,9 +8,21 @@ import { BreadcrumbItem } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
 import { Loader2 } from "lucide-react";
 
+interface Company {
+    id: number,
+    name: string
+}
+
+interface Department {
+    id: number,
+    name: string,
+    company_id: number
+}
+
 interface Area {
     id: number;
     name: string;
+    department_id: number;
 }
 
 interface Folder {
@@ -21,6 +33,8 @@ interface Folder {
 }
 
 interface CreateProps {
+    companies: Company[];
+    departments: Department[];
     areas: Area[];
     folders: Folder[];
 }
@@ -36,8 +50,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function ({ areas, folders }: CreateProps) {
+export default function ({ companies, departments, areas, folders }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
+        company_id: "",
+        department_id: "",
         area_id: "",
         parent_folder_id: "",
         name: "", // aqui escribe el area
@@ -68,6 +84,16 @@ export default function ({ areas, folders }: CreateProps) {
         router.visit(route('folders.index'));
     }
 
+    //Filtrar departamentos de uan empresa
+    const filteredDepartments = departments.filter(
+        (d) => String(d.company_id) === data.company_id
+    );
+
+    //Filtrar areas de un departamneto
+    const filteredAreas = areas.filter(
+        (a) => String(a.department_id) === data.department_id
+    );
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Crear Folder" />
@@ -80,17 +106,66 @@ export default function ({ areas, folders }: CreateProps) {
                         <CardContent className="flex flex-col gap-4">
                             {/* Aqui estan los campos */}
                             <div className="flex flex-col gap-1 mt-5">
-                                <Label htmlFor="area_id">Area (Opcional)</Label>
+                                <Label htmlFor="company_id">Empresa</Label>
                                 <Select
-                                    value={data.area_id ? String(data.area_id) : ""}
-                                    onValueChange={(value) => setData("area_id", value)}
+                                    value={data.company_id}
+                                    onValueChange={(value) => {
+                                        setData("company_id", value);
+                                        setData("department_id", "");
+                                    }}
                                     disabled={processing}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Selecciona un area" />
+                                        <SelectValue placeholder="Selecciona una empresa"></SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {areas.map((a) => (
+                                        {companies.map((c) => (
+                                            <SelectItem key={c.id} value={String(c.id)}>
+                                                {c.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.company_id && (
+                                    <p className="text-red-500 text-sm">{errors.company_id}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-1 mt-3">
+                                <Label htmlFor="department_id">Departamento</Label>
+                                <Select
+                                    value={data.department_id}
+                                    onValueChange={(value) => setData("department_id", value)}
+                                    disabled={!data.company_id || processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un departamento"></SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {filteredDepartments.map((d) => (
+                                            <SelectItem key={d.id} value={String(d.id)}>
+                                                {d.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.department_id && (
+                                    <p className="text-red-500 text-sm">{errors.department_id}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col gap-1 mt-3">
+                                <Label htmlFor="area_id">Area</Label>
+                                <Select
+                                    value={data.area_id}
+                                    onValueChange={(value) => setData("area_id", value)}
+                                    disabled={!data.department_id || processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un area"></SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {filteredAreas.map((a) => (
                                             <SelectItem key={a.id} value={String(a.id)}>
                                                 {a.name}
                                             </SelectItem>
@@ -170,6 +245,6 @@ export default function ({ areas, folders }: CreateProps) {
                     </form>
                 </Card >
             </div>
-        </AppLayout>
+        </AppLayout >
     );
 }
