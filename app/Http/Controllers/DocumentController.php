@@ -44,9 +44,6 @@ class DocumentController extends Controller
                 'file_path' => 'required|string|max:255',
             ]);
 
-            $folder = Folder::find($validated['folder_id']);
-            $validated['area_id'] = $folder->area_id;
-
             Document::create($validated);
             return redirect()
                 ->route('documents.index')
@@ -91,8 +88,6 @@ class DocumentController extends Controller
                 'folder_id' => 'required|exists:folders,id',
                 'file_path' => 'required|string|max:255',
             ]);
-
-            $validated['area_id'] = Folder::find($validated['folder_id'])->area_id;
 
             $document->update($validated);
             return redirect()

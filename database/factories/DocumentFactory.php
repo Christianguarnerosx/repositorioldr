@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Folder;
-use App\Models\Area;
 use App\Models\User;
 
 /**
@@ -21,8 +20,7 @@ class DocumentFactory extends Factory
     {
         return [
             'name' => $this->faker->words(2, true),
-            'folder_id' => Folder::factory(),
-            'area_id' => Area::factory(),
+            'folder_id' => Folder::inRandomOrder()->first()->id,
             'user_id' => User::factory(),
             'file_path' => $this->faker->url(),
         ];

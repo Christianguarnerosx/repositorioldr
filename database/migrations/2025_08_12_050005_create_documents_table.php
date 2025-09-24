@@ -16,10 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('file_path');
             $table->foreignId('folder_id')->constrained('folders')->cascadeOnDelete();
-            $table->foreignId('area_id')->constrained()->cascadeOnDelete();
             $table->integer('size')->nullable();
             $table->string('mime_type')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

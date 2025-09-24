@@ -51,7 +51,6 @@ class DatabaseSeeder extends Seeder
                         // Crear documentos en carpeta hija
                         Document::factory(3)->create([
                             'folder_id' => $childFolder->id,
-                            'area_id' => $area->id,
                             'user_id' => $users->random()->id,
                         ]);
                     });
