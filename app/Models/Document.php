@@ -13,7 +13,6 @@ class Document extends Model
         'name',
         'file_path',
         'folder_id',
-        'area_id',
         'size',
         'mime_type',
         'user_id',
@@ -24,14 +23,8 @@ class Document extends Model
         return $this->belongsTo(Folder::class);
     }
 
-    public function area()
+    public function user()
     {
-        return $this->belongsTo(Area::class);
-    }
-    
-
-    public function uploadedBy()
-    {
-        return $this->belongsTo(User::class, 'uploaded_by');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

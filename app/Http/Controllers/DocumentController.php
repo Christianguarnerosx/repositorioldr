@@ -15,7 +15,7 @@ class DocumentController extends Controller
     public function index()
     {
         // vista de edición
-        $documents = Document::with('folder', 'area', 'user')->paginate(9);
+        $documents = Document::with('folder', 'user')->paginate(9);
         return Inertia::render('Documents/Index', ['documents' => $documents]);
     }
 

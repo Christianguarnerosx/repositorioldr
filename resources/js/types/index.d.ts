@@ -71,6 +71,18 @@ export interface Folder {
     parent_folder_name?: string;   // opcional, para mostrar el folder padre
 }
 
+export interface Document {
+    id: number;
+    name: string;
+    folder_id: number;
+    user_id: number;
+    file_path: string;
+    size?: number;
+    mime_type?: string;
+    created_at: string;
+    updated_at: string;
+}
+
 //Para la paginacion
 export interface PaginationLinks {
     url: string | null;
@@ -95,6 +107,7 @@ export interface pageProps {
     areas: PaginateData<Area>;
     departments: PaginateData<Department>;
     folders: PaginateData<Folder>;   // <-- aquí agregamos folders
+    documents: PaginateData<Document>;
 
     [key: string]: unknown;
 }
