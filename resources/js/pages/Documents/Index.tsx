@@ -9,8 +9,8 @@ import { Plus, Trash2 } from "lucide-react";
 interface Document {
     id: number;
     name: string;
-    folder_id: number;
-    user_id: number;
+    parent_folder_name: string;
+    user_name: string;
     file_path: string;
     size?: number;
     mime_type?: string;
@@ -57,8 +57,12 @@ export default function Index() {
             header: 'Type'
         },
         {
-            accessorKey: 'folder_id',
-            header: 'Parent folder'
+            accessorKey: 'parent_folder_name',
+            header: 'Parent folder',
+        },
+        {
+            accessorKey: 'user_name',
+            header: 'User',
         },
         {
             accessorKey: 'created_at',

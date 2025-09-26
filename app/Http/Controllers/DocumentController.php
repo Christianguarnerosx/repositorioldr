@@ -16,6 +16,24 @@ class DocumentController extends Controller
     {
         // vista de edición
         $documents = Document::with('folder', 'user')->paginate(9);
+
+        $documents->setCollection(
+            $documents->getCollection()->transform(function ($document) {
+                return [
+                    'id' => $document->id,
+                    'name' => $document->name,
+                    'parent_folder_name' => $document->folder?->name ?? 'Ninguno',
+                    'user_name' => $document->user?->name ?? 'N/A',
+                    'file_path' => $document->file_path,
+                    'size' => $document->size,
+                    'mime_type' => $document->mime_type,
+                    'created_at' => $document->created_at,
+                    'updated_at' => $document->updated_at,
+                ];
+            })
+        );
+
+
         return Inertia::render('Documents/Index', ['documents' => $documents]);
     }
 

@@ -74,8 +74,8 @@ export interface Folder {
 export interface Document {
     id: number;
     name: string;
-    folder_id: number;
-    user_id: number;
+    parent_folder_name: string;
+    user_name: string;
     file_path: string;
     size?: number;
     mime_type?: string;

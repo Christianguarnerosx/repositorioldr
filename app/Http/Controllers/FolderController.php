@@ -19,14 +19,16 @@ class FolderController extends Controller
         // devolver una vista de edición
         $folders = Folder::with(['area', 'parentFolder'])->paginate(9);
 
-        $folders->getCollection()->transform(function ($folder) {
-            return [
-                'id' => $folder->id,
-                'name' => $folder->name,
-                'area_name' => $folder->area?->name ?? 'N/A',
-                'parent_folder_name' => $folder->parentFolder?->name ?? 'Ninguno', // <--- aquí
-            ];
-        });
+        $folders->setCollection(
+            $folders->getCollection()->transform(function ($folder) {
+                return [
+                    'id' => $folder->id,
+                    'name' => $folder->name,
+                    'area_name' => $folder->area?->name ?? 'N/A',
+                    'parent_folder_name' => $folder->parentFolder?->name ?? 'Ninguno',
+                ];
+            })
+        );
 
         return Inertia::render('Folders/Index', ['folders' => $folders]);
     }
