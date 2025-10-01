@@ -74,11 +74,13 @@ export interface Folder {
 export interface Document {
     id: number;
     name: string;
-    parent_folder_name: string;
-    user_name: string;
+    folder_id: number;                // referencia al folder donde está
+    parent_folder_name: string;       // opcional, solo para mostrar en tablas
+    user_id: number;                  // referencia al usuario que subió el documento
+    user_name: string;                // opcional, solo para mostrar
     file_path: string;
-    size?: number;
-    mime_type?: string;
+    size?: number;                    // opcional
+    mime_type?: string;               // opcional
     created_at: string;
     updated_at: string;
 }
@@ -106,8 +108,9 @@ export interface pageProps {
     companies: PaginateData<Company>;
     areas: PaginateData<Area>;
     departments: PaginateData<Department>;
-    folders: PaginateData<Folder>;   // <-- aquí agregamos folders
+    folders: PaginateData<Folder>;
     documents: PaginateData<Document>;
 
     [key: string]: unknown;
 }
+

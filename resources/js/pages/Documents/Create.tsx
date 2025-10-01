@@ -1,154 +1,170 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
+import { BreadcrumbItem, Folder } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
-interface Folder {
-    id: number;
-    name: string;
-    area_id?: number;
-    parent_folder_id?: number;
-}
-
-interface Document {
-    id: number;
-    name: string;
-    parent_folder_name: string;
-    user_name: string;
-    file_path: string;
-    size?: number;
-    mime_type?: string;
-    created_at: string;
-    updated_at: string;
-}
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: "Documents", href: "/documents" },
+    { title: "Create Document", href: "" },
+];
 
 interface CreateProps {
     folders: Folder[];
-    documents: Document[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: "Documents",
-        href: "/documents"
-    }, {
-        title: "Create Document",
-        href: ""
-    }
-]
-
-export default function ({ folders, documents }: CreateProps) {
+export default function CreateDocument({ folders }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
-        folder_id: "",
+        folder_id: "" as number | "",
         name: "",
         file_path: "",
-        size: "",
-        mime_type: "",
-        created_at: "",
-        updated_at: "",
-        user_id: ""
+        user_id: "",
     });
 
     const [open, setOpen] = useState(false);
-    const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
-
     const [query, setQuery] = useState("");
 
+    // Filtrado dinámico de carpetas
     const filteredFolders = folders.filter(folder =>
         folder.name.toLowerCase().includes(query.toLowerCase())
-    )
+    );
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        console.log("🚀 Enviando request con datos...", data);
-
-        post(route("documents.store"), {
-            onError: (errors) => {
-                console.log("🚀 Errores: ", errors);
-            },
-            onFinish: () => {
-                console.log("🚀 Documento creado");
-            }
-        });
-    }
+        post(route("documents.store"));
+    };
 
     const handleCancel = () => {
-        if (data.name) {
-            if (!confirm('Are you sure you want to leave this form. Any unsaved changes will be lost?')) {
+        if (data.name || data.folder_id) {
+            if (!confirm("Are you sure you want to leave this form? Any unsaved changes will be lost.")) {
                 return;
             }
         }
-
-        router.visit(route('documents.index'));
-    }
+        router.visit(route("documents.index"));
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Document" />
             <div className="flex flex-col gap-4 p-4">
-                <h1 className="text-2x1 font-semibold">Crear documento</h1>
+                <h1 className="text-2xl font-semibold">Crear documento</h1>
 
                 <Card>
                     <form onSubmit={handleSubmit}>
-                        <CardHeader>Informacion del documento</CardHeader>
+                        <CardHeader>Información del documento</CardHeader>
                         <CardContent className="flex flex-col gap-4">
-                            {/* Aqui estan los campos */}
-                            <Popover open={open} onOpenChange={setOpen}>
-                                <PopoverTrigger asChild>
-                                    <Button variant="outline" className="w-[200px] justify-start">
-                                        {selectedFolder ? selectedFolder.name : "Seleccionar carpeta"}
-                                    </Button>
-                                </PopoverTrigger>
+                            {/* Nombre del documento */}
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="name">Nombre</Label>
+                                <input
+                                    id="name"
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData("name", e.target.value)}
+                                    className="border rounded p-2"
+                                />
+                                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                            </div>
 
-                                <PopoverContent className="p-0">
-                                    <Command>
-                                        <CommandInput
-                                            placeholder="Buscar carpeta..."
-                                            value={query}               // <-- ahora controlado
-                                            onValueChange={(val: string) => setQuery(val)}
-                                        />
-                                        <CommandList>
-                                            {filteredFolders.length === 0 ? (
-                                                <CommandEmpty>No se encontró carpeta.</CommandEmpty>
-                                            ) : (
-                                                <CommandGroup>
-                                                    {filteredFolders.map((folder) => (
-                                                        <CommandItem
-                                                            key={folder.id}
-                                                            value={String(folder.id)}
-                                                            onSelect={(value: string) => {
-                                                                // value viene del CommandItem
-                                                                const found = folders.find(f => String(f.id) === value);
-                                                                if (!found) return;
-                                                                setSelectedFolder(found);
-                                                                setData("folder_id", value);
-                                                                // cerrar popover
-                                                                setOpen(false);
-                                                                // limpiar query *después* de cerrar para evitar re-renders que quiten el list
-                                                                // puedes ajustar o eliminar el timeout si no lo necesitas
-                                                                setTimeout(() => setQuery(""), 80);
-                                                            }}
-                                                        >
-                                                            {folder.name}
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            )}
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
+                            {/* Ruta del archivo */}
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="file_path">Archivo</Label>
+                                <input
+                                    id="file_path"
+                                    type="text"
+                                    value={data.file_path}
+                                    onChange={(e) => setData("file_path", e.target.value)}
+                                    className="border rounded p-2"
+                                />
+                                {errors.file_path && <p className="text-red-500 text-sm">{errors.file_path}</p>}
+                            </div>
+
+                            {/* Selector de carpeta */}
+                            <div className="flex flex-col gap-1">
+                                <Label htmlFor="folder_id">Folder</Label>
+                                <Popover open={open} onOpenChange={setOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="w-full justify-between"
+                                            disabled={processing}
+                                        >
+                                            {data.folder_id
+                                                ? folders.find(folder => folder.id === data.folder_id)?.name
+                                                : "Select a folder"}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder="Search folder..."
+                                                value={query}
+                                                onValueChange={setQuery}
+                                            />
+                                            <CommandList>
+                                                {filteredFolders.length === 0 ? (
+                                                    <CommandEmpty>No folder found.</CommandEmpty>
+                                                ) : (
+                                                    <CommandGroup heading="Folders">
+                                                        {filteredFolders.map((folder) => (
+                                                            <CommandItem
+                                                                key={folder.id}
+                                                                value={String(folder.id)}
+                                                                onSelect={() => {
+                                                                    setData("folder_id", folder.id);
+                                                                    setOpen(false);
+                                                                    setTimeout(() => setQuery(""), 80);
+                                                                }}
+                                                            >
+                                                                <Check
+                                                                    className={cn(
+                                                                        "mr-2 h-4 w-4",
+                                                                        data.folder_id === folder.id
+                                                                            ? "opacity-100"
+                                                                            : "opacity-0"
+                                                                    )}
+                                                                />
+                                                                {folder.name}
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                )}
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                {errors.folder_id && (
+                                    <p className="text-red-500 text-sm">{errors.folder_id}</p>
+                                )}
+                            </div>
+
+                            {/* Botones */}
+                            <div className="flex gap-2 mt-4">
+                                <Button type="submit" disabled={processing}>Guardar</Button>
+                                <Button type="button" variant="outline" onClick={handleCancel}>Cancelar</Button>
+                            </div>
                         </CardContent>
                     </form>
                 </Card>
             </div>
         </AppLayout>
-    )
+    );
 }
