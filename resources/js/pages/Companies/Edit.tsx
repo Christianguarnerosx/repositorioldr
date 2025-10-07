@@ -7,6 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Empresas',
@@ -22,27 +35,17 @@ interface EditProps {
     company: Company
 }
 
-export default function Edit({ company }:EditProps) {
-
+export default function Edit({ company }: EditProps) {
     //hook useform: utilidad que ayuda a gestionar el estado de un formulario, enviar datos al controlador y manejar las respuestas
     const { data, setData, put, processing, errors } = useForm({
         name: company.name || '',
     });
 
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         put(route('companies.update', company.id));
-    }
-
-    const handleCancel = () => {
-        //Si el usuario esta cargando datos y quiere salir salta precaucion, con propiedades de data
-        if (data.name) {
-            if (!confirm('Are you sure you want to leave this form. Any unsaved changes will be lost?')) {
-                return;
-            }
-        }
-
-        router.visit(route('companies.index'));
     }
 
     return (
@@ -73,7 +76,13 @@ export default function Edit({ company }:EditProps) {
                                     className="mr-5"
                                     type='button'
                                     variant='outline'
-                                    onClick={handleCancel}
+                                    onClick={() => {
+                                        if (data.name) {
+                                            setIsDialogOpen(true); // abrir el dialog
+                                        } else {
+                                            router.visit(route('companies.index')); // sin cambios, ir al index
+                                        }
+                                    }}
                                 >
                                     Cancelar
                                 </Button>
@@ -96,6 +105,27 @@ export default function Edit({ company }:EditProps) {
                     </Card>
                 </div>
             </AppLayout>
+
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Any unsaved changes will be lost.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="flex justify-end gap-2">
+                        <AlertDialogCancel>Stay</AlertDialogCancel>
+                        <AlertDialogAction
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={() => router.visit(route('companies.index'))}
+                        >
+                            Leave
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
         </div>
     )
 }
