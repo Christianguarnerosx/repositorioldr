@@ -104,7 +104,14 @@ export interface PaginateData<T> {
 }
 
 // PageProps para Inertia, siempre abajo de las interfaces principales
-export interface pageProps {
+export interface PageProps {
+    flash: {
+        success?: string;
+        info?: string;
+        warning?: string;
+        error?: string;
+    }
+
     companies: PaginateData<Company>;
     areas: PaginateData<Area>;
     departments: PaginateData<Department>;

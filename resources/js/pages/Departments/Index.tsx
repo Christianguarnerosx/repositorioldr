@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
-import { pageProps, type BreadcrumbItem, Department } from '@/types';
+import { PageProps, type BreadcrumbItem, Department } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
@@ -9,7 +9,7 @@ import { Plus, Trash2 } from 'lucide-react';
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Departments', href: '/departments' }];
 
 export default function Index() {
-    const { departments } = usePage<pageProps>().props;
+    const { departments } = usePage<PageProps>().props;
 
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this department?')) {

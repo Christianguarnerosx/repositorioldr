@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, pageProps } from "@/types";
+import { BreadcrumbItem, PageProps } from "@/types";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Plus, Trash2 } from "lucide-react";
@@ -21,7 +21,7 @@ interface Document {
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Documents', href: '/documents' }];
 
 export default function Index() {
-    const { documents } = usePage<pageProps>().props;
+    const { documents } = usePage<PageProps>().props;
 
     const handleDelete = (id: number) => {
         if (!confirm('Are you sure you want to delete this document?')) {

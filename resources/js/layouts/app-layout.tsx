@@ -1,3 +1,5 @@
+import { Toaster } from '@/components/ui/sonner';
+import useFlash from '@/hooks/use-flash';
 import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode } from 'react';
@@ -7,8 +9,14 @@ interface AppLayoutProps {
     breadcrumbs?: BreadcrumbItem[];
 }
 
-export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
-    <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
-        {children}
-    </AppLayoutTemplate>
-);
+export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
+    useFlash();
+    return (
+        <>
+            <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+                {children}
+            </AppLayoutTemplate>
+            <Toaster position='top-right' richColors closeButton duration={4000}/>
+        </>
+    )
+};

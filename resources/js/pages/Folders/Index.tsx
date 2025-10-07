@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
-import { pageProps, type BreadcrumbItem } from '@/types';
+import { PageProps, type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
@@ -16,7 +16,7 @@ interface Folder {
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Folders', href: '/folders' }];
 
 export default function Index() {
-    const { folders } = usePage<pageProps>().props;
+    const { folders } = usePage<PageProps>().props;
 
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this folder?')) {

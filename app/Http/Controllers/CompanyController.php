@@ -104,7 +104,7 @@ class CompanyController extends Controller
             $company->delete();
             return redirect()
                 ->route('companies.index')
-                ->with('success', 'Company deleted successfully.');
+                ->with('info', 'Company deleted successfully.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
