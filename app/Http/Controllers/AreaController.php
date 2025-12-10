@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Company;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,8 +34,8 @@ class AreaController extends Controller
      */
     public function create()
     {
-        // devolver una vista de edición
-        $companies = \App\Models\Company::all();
+        // devolver una vista de edición
+        $companies = Company::all();
         $departments = Department::all();
 
         return Inertia::render('Areas/Create', [
@@ -78,10 +79,12 @@ class AreaController extends Controller
      */
     public function edit(Area $area)
     {
-        // devolver una vista de edición
+        // devolver una vista de edición
+        $companies = Company::all();
         $departments = Department::all();
         return Inertia::render('Areas/Edit', [
-            'area' => $area,
+            'area' => $area->load('department.company'),
+            'companies' => $companies,
             'departments' => $departments
         ]);
     }

@@ -90,12 +90,16 @@ class FolderController extends Controller
      */
     public function edit(Folder $folder)
     {
-        // devolver una vista de edición
-        $areas = Area::select('id', 'name')->get();
+        // devolver una vista de edición
+        $companies = Company::all();
+        $departments = Department::all();
+        $areas = Area::select('id', 'name', 'department_id')->get();
         $folders = Folder::select('id', 'name', 'parent_folder_id', 'area_id')->get();
 
         return Inertia::render('Folders/Edit', [
-            'folder' => $folder->load(['area', 'parentFolder']),
+            'folder' => $folder->load(['area.department.company', 'parentFolder']),
+            'companies' => $companies,
+            'departments' => $departments,
             'areas' => $areas,
             'folders' => $folders,
         ]);
