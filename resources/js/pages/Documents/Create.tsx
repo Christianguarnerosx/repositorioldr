@@ -39,10 +39,9 @@ export default function CreateDocument({ folders }: CreateProps) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
 
-    // Filtrado dinámico de carpetas
-    const filteredFolders = folders.filter(folder =>
-        folder.name.toLowerCase().includes(query.toLowerCase())
-    );
+    // Query para el input del combobox
+    // No necesitamos filtrar manualmente, el componente Command lo hace por nosotros
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -120,33 +119,30 @@ export default function CreateDocument({ folders }: CreateProps) {
                                                 onValueChange={setQuery}
                                             />
                                             <CommandList>
-                                                {filteredFolders.length === 0 ? (
-                                                    <CommandEmpty>No folder found.</CommandEmpty>
-                                                ) : (
-                                                    <CommandGroup heading="Folders">
-                                                        {filteredFolders.map((folder) => (
-                                                            <CommandItem
-                                                                key={folder.id}
-                                                                value={String(folder.id)}
-                                                                onSelect={() => {
-                                                                    setData("folder_id", folder.id);
-                                                                    setOpen(false);
-                                                                    setTimeout(() => setQuery(""), 80);
-                                                                }}
-                                                            >
-                                                                <Check
-                                                                    className={cn(
-                                                                        "mr-2 h-4 w-4",
-                                                                        data.folder_id === folder.id
-                                                                            ? "opacity-100"
-                                                                            : "opacity-0"
-                                                                    )}
-                                                                />
-                                                                {folder.name}
-                                                            </CommandItem>
-                                                        ))}
-                                                    </CommandGroup>
-                                                )}
+                                                <CommandEmpty>No folder found.</CommandEmpty>
+                                                <CommandGroup heading="Folders">
+                                                    {folders.map((folder) => (
+                                                        <CommandItem
+                                                            key={folder.id}
+                                                            value={folder.name}
+                                                            onSelect={() => {
+                                                                setData("folder_id", folder.id);
+                                                                setOpen(false);
+                                                                // setTimeout(() => setQuery(""), 80); // Optional: Clear query on select if desired
+                                                            }}
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    "mr-2 h-4 w-4",
+                                                                    data.folder_id === folder.id
+                                                                        ? "opacity-100"
+                                                                        : "opacity-0"
+                                                                )}
+                                                            />
+                                                            {folder.name}
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
                                             </CommandList>
                                         </Command>
                                     </PopoverContent>

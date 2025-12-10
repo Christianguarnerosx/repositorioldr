@@ -24,7 +24,6 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Empresas', href: '/companies' }
 export default function Index() {
     const { companies } = usePage<PageProps>().props;
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [recordIdToDelete, setRecordIdToDelete] = useState<number | null>(null);
 
     const handlePageChange = (url: string | null) => {
@@ -54,7 +53,7 @@ export default function Index() {
                                 <Pencil className="h-4 w-4" />
                             </Button>
                         </Link>
-                        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <AlertDialog open={recordIdToDelete === company.id} onOpenChange={(open) => !open && setRecordIdToDelete(null)}>
                             <AlertDialogTrigger asChild>
                                 <Button
                                     size="sm"
@@ -79,7 +78,7 @@ export default function Index() {
                                         onClick={() => {
                                             if (recordIdToDelete) {
                                                 router.delete(route('companies.destroy', recordIdToDelete));
-                                                setIsDialogOpen(false);
+                                                setRecordIdToDelete(null);
                                             }
                                         }}
                                     >

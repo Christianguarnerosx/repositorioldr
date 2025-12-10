@@ -4,7 +4,19 @@ import { DataTable } from '@/components/ui/data-table';
 import { PageProps, type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from 'react';
 
 interface Folder {
     id: number;
@@ -17,12 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Folders', href: '/folders' }];
 
 export default function Index() {
     const { folders } = usePage<PageProps>().props;
-
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this folder?')) {
-            router.delete(route("folders.destroy", id));
-        }
-    }
+    const [recordIdToDelete, setRecordIdToDelete] = useState<number | null>(null);
 
     const handlePageChange = (url: string | null) => {
         if (url) {
@@ -53,13 +60,47 @@ export default function Index() {
             cell: ({ row }) => {
                 const folder = row.original;
                 return (
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(folder.id)}
-                    >
-                        <Trash2 className="h-4 w-4 text-white" />
-                    </Button>
+                    <div className="flex gap-2">
+                        <Link href={route('folders.edit', folder.id)}>
+                            <Button size="sm" variant="default">
+                                <Pencil className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <AlertDialog open={recordIdToDelete === folder.id} onOpenChange={(open) => !open && setRecordIdToDelete(null)}>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => setRecordIdToDelete(folder.id)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                        Are you absolutely sure?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the folder.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => {
+                                            if (recordIdToDelete) {
+                                                router.delete(route('folders.destroy', recordIdToDelete));
+                                                setRecordIdToDelete(null);
+                                            }
+                                        }}
+                                    >
+                                        Delete
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
                 )
             }
         }

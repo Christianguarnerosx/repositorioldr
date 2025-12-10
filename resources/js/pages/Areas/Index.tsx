@@ -1,21 +1,28 @@
 import AppLayout from '@/layouts/app-layout';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui/data-table';
-import { pageProps, type BreadcrumbItem, Area } from '@/types';
+import { PageProps, type BreadcrumbItem, Area } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Areas', href: '/areas' }];
 
 export default function Index() {
-    const { areas } = usePage<pageProps>().props;
-
-    const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this area?')) {
-            router.delete(route("areas.destroy", id));
-        }
-    }
+    const { areas } = usePage<PageProps>().props;
+    const [recordIdToDelete, setRecordIdToDelete] = useState<number | null>(null);
 
     const handlePageChange = (url: string | null) => {
         if (url) {
@@ -42,13 +49,47 @@ export default function Index() {
             cell: ({ row }) => {
                 const area = row.original;
                 return (
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(area.id)}
-                    >
-                        <Trash2 className="h-4 w-4 text-white" />
-                    </Button>
+                    <div className="flex gap-2">
+                        <Link href={route('areas.edit', area.id)}>
+                            <Button size="sm" variant="default">
+                                <Pencil className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <AlertDialog open={recordIdToDelete === area.id} onOpenChange={(open) => !open && setRecordIdToDelete(null)}>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => setRecordIdToDelete(area.id)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                        Are you absolutely sure?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the area.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => {
+                                            if (recordIdToDelete) {
+                                                router.delete(route('areas.destroy', recordIdToDelete));
+                                                setRecordIdToDelete(null);
+                                            }
+                                        }}
+                                    >
+                                        Delete
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
                 )
             }
         }
@@ -59,7 +100,7 @@ export default function Index() {
             <Head title="Areas" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className='flex items-center justify-between'>
-                    <h1 className="text-2xl font-bold">areas</h1>
+                    <h1 className="text-2xl font-bold">Areas</h1>
                     <Link href={route('areas.create')}>
                         <Button
                             variant="default"
