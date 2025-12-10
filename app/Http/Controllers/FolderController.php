@@ -132,10 +132,18 @@ class FolderController extends Controller
     {
         // Eliminar el registro
         try {
-            if (!$request->has('confirm') || ($folder->documents()->count() > 0 || $folder->childFolders()->count() > 0)) {
-                $message = "This folder has {$folder->documents()->count()} documents and {$folder->childFolders()->count()} subfolders. They will also be deleted.";
-                return back()->with('warning', $message);
+            // Verificar si la carpeta tiene documentos o subcarpetas
+            $documentsCount = $folder->documents()->count();
+            $subFoldersCount = $folder->childFolders()->count();
+            
+            if ($documentsCount > 0 || $subFoldersCount > 0) {
+                $message = "Cannot delete this folder. It contains {$documentsCount} document(s) and {$subFoldersCount} subfolder(s). Please delete or move the contents first.";
+                return redirect()
+                    ->back()
+                    ->with('error', $message);
             }
+            
+            // Si está vacía, eliminar
             $folder->delete();
             return redirect()
                 ->route('folders.index')

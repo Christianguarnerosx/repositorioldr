@@ -125,9 +125,7 @@ class DocumentController extends Controller
     {
         // Eliminar un registro
         try {
-            if (!$request->has('confirm')) {
-                return back()->with('warning', "This document will be deleted. Confirm to delete.");
-            }
+            // La confirmación ya se maneja en el frontend con AlertDialog
             $document->delete();
             return redirect()
                 ->route('documents.index')
