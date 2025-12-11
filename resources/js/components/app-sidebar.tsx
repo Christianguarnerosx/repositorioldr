@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building, Files, Folder, Grid2x2, LayoutGrid, Puzzle, ClipboardList, ClipboardCheck } from 'lucide-react';
+import { BookOpen, Building, Files, Folder, Grid2x2, LayoutGrid, Puzzle, ClipboardList, ClipboardCheck, AlertCircle } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // Aqui se crean los menus
@@ -48,6 +48,11 @@ const mainNavItems: NavItem[] = [
         title: 'Audits',
         href: '/audits',
         icon: ClipboardCheck, 
+    },
+    {
+        title: 'Hallazgos',
+        href: '/hallazgos',
+        icon: AlertCircle,
     },
 ];
 

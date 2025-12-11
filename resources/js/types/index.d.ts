@@ -119,6 +119,7 @@ export interface PageProps {
     documents: PaginateData<Document>;
     auditTypes: PaginateData<AuditType>;
     audits: PaginateData<Audit>;
+    hallazgos: PaginateData<Hallazgo>;
 
     [key: string]: unknown;
 }
@@ -142,3 +143,24 @@ export interface Audit {
     updated_at?: string;
 }
 
+export interface FindingType {
+    id: number;
+    name: string;
+    description?: string;
+}
+
+export interface Hallazgo {
+    id: number;
+    title: string;
+    description: string;
+    severity: 'minor' | 'major' | 'critical';
+    status: 'pending' | 'resolved' | 'not_applicable';
+    action_required?: string;
+    due_date?: string;
+    corrected_at?: string;
+    finding_type_name?: string;
+    audit_title?: string;
+    document_name?: string;
+    created_by_name?: string;
+    created_at?: string;
+}

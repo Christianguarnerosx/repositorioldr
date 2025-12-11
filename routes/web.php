@@ -7,6 +7,7 @@ use App\Http\Controllers\FolderController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\AuditTypeController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\HallazgosController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('documents', DocumentController::class);
     Route::resource('audit-types', AuditTypeController::class);
     Route::resource('audits', AuditController::class);
+    Route::resource('hallazgos', HallazgosController::class);
     Route::resource('audit-document-reviews', \App\Http\Controllers\AuditDocumentReviewController::class)->only(['store', 'update', 'destroy']);
 
 
