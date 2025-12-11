@@ -22,7 +22,6 @@ class DocumentFactory extends Factory
             'name' => $this->faker->words(2, true),
             'folder_id' => Folder::inRandomOrder()->first()->id,
             'user_id' => User::factory(),
-            'file_path' => $this->faker->url(),
         ];
     }
 }

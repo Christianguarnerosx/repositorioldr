@@ -30,4 +30,9 @@ class AuditDocumentReview extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function auditFindings()
+    {
+        return $this->hasMany(AuditFinding::class);
+    }
 }
