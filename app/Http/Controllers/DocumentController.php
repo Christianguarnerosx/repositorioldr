@@ -12,27 +12,33 @@ class DocumentController extends Controller
     /**
      * Display a listing of the resource.
      */
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        // vista de edición
-        $documents = Document::with('folder', 'user')->paginate(9);
+        $documents = Document::with(['folder', 'user', 'versions' => function ($query) {
+            $query->latest();
+        }])->paginate(9);
 
         $documents->setCollection(
             $documents->getCollection()->transform(function ($document) {
+                $latestVersion = $document->versions->first();
                 return [
                     'id' => $document->id,
                     'name' => $document->name,
                     'parent_folder_name' => $document->folder?->name ?? 'Ninguno',
                     'user_name' => $document->user?->name ?? 'N/A',
-                    'file_path' => $document->file_path,
-                    'size' => $document->size,
-                    'mime_type' => $document->mime_type,
+                    // Use latest version info if available, otherwise placeholders
+                    'file_name' => $latestVersion?->file_name ?? '',
+                    'size' => $latestVersion?->size ?? 0,
+                    'mime_type' => $latestVersion?->mime_type ?? '',
+                    'version_count' => $document->versions->count(),
                     'created_at' => $document->created_at,
                     'updated_at' => $document->updated_at,
                 ];
             })
         );
-
 
         return Inertia::render('Documents/Index', ['documents' => $documents]);
     }
@@ -42,7 +48,6 @@ class DocumentController extends Controller
      */
     public function create()
     {
-        //vista de edición
         $folders = Folder::all();
         return Inertia::render('Documents/Create', [
             'folders' => $folders,
@@ -54,15 +59,35 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
-        // Crear un nuevo registro
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:100',
                 'folder_id' => 'required|exists:folders,id',
-                'file_path' => 'required|string|max:255',
+                'file' => 'required|file|max:10240', // 10MB max
             ]);
 
-            Document::create($validated);
+            // Create the Document Concept
+            $document = Document::create([
+                'name' => $validated['name'],
+                'folder_id' => $validated['folder_id'],
+                'user_id' => auth()->id(),
+            ]);
+
+            // Handle File Upload for the first version
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $path = $file->store('documents'); // Storage path: storage/app/documents. Returns "documents/filename.ext"
+
+                // Create the first Document Version
+                $document->versions()->create([
+                    'file_name' => basename($path), // Store only the filename
+                    'uploaded_by' => auth()->id(),
+                    'notes' => 'Initial version',
+                    'mime_type' => $file->getClientMimeType(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+
             return redirect()
                 ->route('documents.index')
                 ->with('success', 'Document created successfully.');
@@ -86,7 +111,6 @@ class DocumentController extends Controller
      */
     public function edit(Document $document)
     {
-        // vista de edición
         $folders = Folder::all();
         return Inertia::render('Documents/Edit', [
             'document' => $document,
@@ -99,15 +123,14 @@ class DocumentController extends Controller
      */
     public function update(Request $request, Document $document)
     {
-        // Actualizar un registro existente
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:100',
                 'folder_id' => 'required|exists:folders,id',
-                'file_path' => 'required|string|max:255',
             ]);
 
             $document->update($validated);
+            
             return redirect()
                 ->route('documents.index')
                 ->with('success', 'Document updated successfully.');
@@ -123,9 +146,7 @@ class DocumentController extends Controller
      */
     public function destroy(Request $request, Document $document)
     {
-        // Eliminar un registro
         try {
-            // La confirmación ya se maneja en el frontend con AlertDialog
             $document->delete();
             return redirect()
                 ->route('documents.index')

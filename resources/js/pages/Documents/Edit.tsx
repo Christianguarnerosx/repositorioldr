@@ -43,7 +43,6 @@ export default function EditDocument({ document, folders }: EditProps) {
     const { data, setData, put, processing, errors } = useForm({
         folder_id: document.folder_id || ("" as number | ""),
         name: document.name || "",
-        file_path: document.file_path || "",
     });
 
     const [open, setOpen] = useState(false);
@@ -61,8 +60,7 @@ export default function EditDocument({ document, folders }: EditProps) {
 
     const handleCancel = () => {
         if (data.name !== document.name || 
-            data.folder_id !== document.folder_id || 
-            data.file_path !== document.file_path) {
+            data.folder_id !== document.folder_id) {
             setIsDialogOpen(true);
         } else {
             router.visit(route("documents.index"));
@@ -94,19 +92,7 @@ export default function EditDocument({ document, folders }: EditProps) {
                                     {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                                 </div>
 
-                                {/* Ruta del archivo */}
-                                <div className="flex flex-col gap-1">
-                                    <Label htmlFor="file_path">Archivo</Label>
-                                    <input
-                                        id="file_path"
-                                        type="text"
-                                        value={data.file_path}
-                                        onChange={(e) => setData("file_path", e.target.value)}
-                                        className="border rounded p-2"
-                                        disabled={processing}
-                                    />
-                                    {errors.file_path && <p className="text-red-500 text-sm">{errors.file_path}</p>}
-                                </div>
+
 
                                 {/* Selector de carpeta */}
                                 <div className="flex flex-col gap-1">

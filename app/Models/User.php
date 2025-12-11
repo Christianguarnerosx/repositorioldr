@@ -12,6 +12,16 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function documentVersions()
+    {
+        return $this->hasMany(DocumentVersion::class, 'uploaded_by');
+    }
+
     /**
      * The attributes that are mass assignable.
      *

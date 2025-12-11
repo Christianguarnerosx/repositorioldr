@@ -11,10 +11,7 @@ class Document extends Model
 
     protected $fillable = [
         'name',
-        'file_path',
         'folder_id',
-        'size',
-        'mime_type',
         'user_id',
     ];
 
@@ -26,5 +23,10 @@ class Document extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function versions()
+    {
+        return $this->hasMany(DocumentVersion::class);
     }
 }

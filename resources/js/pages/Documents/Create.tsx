@@ -1,27 +1,20 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Folder } from "@/types";
-import { Head, router, useForm } from "@inertiajs/react";
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
+import { BreadcrumbItem, Folder } from '@/types';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: "Documents", href: "/documents" },
-    { title: "Create Document", href: "" },
+    { title: 'Documents', href: '/documents' },
+    { title: 'Create Document', href: '' },
 ];
 
 interface CreateProps {
@@ -30,31 +23,30 @@ interface CreateProps {
 
 export default function CreateDocument({ folders }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
-        folder_id: "" as number | "",
-        name: "",
-        file_path: "",
-        user_id: "",
+        folder_id: '' as number | '',
+        name: '',
+        file: null as File | null,
+        user_id: '',
     });
 
     const [open, setOpen] = useState(false);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState('');
 
     // Query para el input del combobox
     // No necesitamos filtrar manualmente, el componente Command lo hace por nosotros
 
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route("documents.store"));
+        post(route('documents.store'));
     };
 
     const handleCancel = () => {
         if (data.name || data.folder_id) {
-            if (!confirm("Are you sure you want to leave this form? Any unsaved changes will be lost.")) {
+            if (!confirm('Are you sure you want to leave this form? Any unsaved changes will be lost.')) {
                 return;
             }
         }
-        router.visit(route("documents.index"));
+        router.visit(route('documents.index'));
     };
 
     return (
@@ -74,23 +66,22 @@ export default function CreateDocument({ folders }: CreateProps) {
                                     id="name"
                                     type="text"
                                     value={data.name}
-                                    onChange={(e) => setData("name", e.target.value)}
-                                    className="border rounded p-2"
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    className="rounded border p-2"
                                 />
-                                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                             </div>
 
-                            {/* Ruta del archivo */}
+                            {/* Archivo */}
                             <div className="flex flex-col gap-1">
-                                <Label htmlFor="file_path">Archivo</Label>
+                                <Label htmlFor="file">Archivo</Label>
                                 <input
-                                    id="file_path"
-                                    type="text"
-                                    value={data.file_path}
-                                    onChange={(e) => setData("file_path", e.target.value)}
-                                    className="border rounded p-2"
+                                    id="file"
+                                    type="file"
+                                    onChange={(e) => setData('file', e.target.files ? e.target.files[0] : null)}
+                                    className="rounded border p-2"
                                 />
-                                {errors.file_path && <p className="text-red-500 text-sm">{errors.file_path}</p>}
+                                {errors.file && <p className="text-sm text-red-500">{errors.file}</p>}
                             </div>
 
                             {/* Selector de carpeta */}
@@ -105,19 +96,13 @@ export default function CreateDocument({ folders }: CreateProps) {
                                             className="w-full justify-between"
                                             disabled={processing}
                                         >
-                                            {data.folder_id
-                                                ? folders.find(folder => folder.id === data.folder_id)?.name
-                                                : "Select a folder"}
+                                            {data.folder_id ? folders.find((folder) => folder.id === data.folder_id)?.name : 'Select a folder'}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-full p-0">
                                         <Command>
-                                            <CommandInput
-                                                placeholder="Search folder..."
-                                                value={query}
-                                                onValueChange={setQuery}
-                                            />
+                                            <CommandInput placeholder="Search folder..." value={query} onValueChange={setQuery} />
                                             <CommandList>
                                                 <CommandEmpty>No folder found.</CommandEmpty>
                                                 <CommandGroup heading="Folders">
@@ -126,17 +111,15 @@ export default function CreateDocument({ folders }: CreateProps) {
                                                             key={folder.id}
                                                             value={folder.name}
                                                             onSelect={() => {
-                                                                setData("folder_id", folder.id);
+                                                                setData('folder_id', folder.id);
                                                                 setOpen(false);
                                                                 // setTimeout(() => setQuery(""), 80); // Optional: Clear query on select if desired
                                                             }}
                                                         >
                                                             <Check
                                                                 className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    data.folder_id === folder.id
-                                                                        ? "opacity-100"
-                                                                        : "opacity-0"
+                                                                    'mr-2 h-4 w-4',
+                                                                    data.folder_id === folder.id ? 'opacity-100' : 'opacity-0',
                                                                 )}
                                                             />
                                                             {folder.name}
@@ -147,15 +130,17 @@ export default function CreateDocument({ folders }: CreateProps) {
                                         </Command>
                                     </PopoverContent>
                                 </Popover>
-                                {errors.folder_id && (
-                                    <p className="text-red-500 text-sm">{errors.folder_id}</p>
-                                )}
+                                {errors.folder_id && <p className="text-sm text-red-500">{errors.folder_id}</p>}
                             </div>
 
                             {/* Botones */}
-                            <div className="flex gap-2 mt-4">
-                                <Button type="submit" disabled={processing}>Guardar</Button>
-                                <Button type="button" variant="outline" onClick={handleCancel}>Cancelar</Button>
+                            <div className="mt-4 flex gap-2">
+                                <Button type="submit" disabled={processing}>
+                                    Guardar
+                                </Button>
+                                <Button type="button" variant="outline" onClick={handleCancel}>
+                                    Cancelar
+                                </Button>
                             </div>
                         </CardContent>
                     </form>

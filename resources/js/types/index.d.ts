@@ -78,7 +78,7 @@ export interface Document {
     parent_folder_name: string;       // opcional, solo para mostrar en tablas
     user_id: number;                  // referencia al usuario que subió el documento
     user_name: string;                // opcional, solo para mostrar
-    file_path: string;
+
     size?: number;                    // opcional
     mime_type?: string;               // opcional
     created_at: string;
@@ -117,7 +117,28 @@ export interface PageProps {
     departments: PaginateData<Department>;
     folders: PaginateData<Folder>;
     documents: PaginateData<Document>;
+    auditTypes: PaginateData<AuditType>;
+    audits: PaginateData<Audit>;
 
     [key: string]: unknown;
+}
+
+export interface AuditType {
+    id: number;
+    name: string;
+    description?: string;
+    status: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface Audit {
+    id: number;
+    title: string;
+    description?: string;
+    audit_type_id: number;
+    audit_type_name?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
