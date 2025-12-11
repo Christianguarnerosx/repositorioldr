@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Audit;
 use App\Models\AuditType;
+use App\Models\Document;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -58,6 +60,24 @@ class AuditController extends Controller
         return redirect()
             ->route('audits.index')
             ->with('success', 'Audit created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Audit $audit)
+    {
+        $audit->load(['auditType', 'documentReviews.documentVersion.document', 'documentReviews.auditor']);
+        
+        $documents = Document::with('versions:id,document_id,created_at')->select('id', 'name')->get();
+        $users = User::select('id', 'name')->get();
+
+        return Inertia::render('Audits/Show', [
+            'audit' => $audit,
+            'assignedDocuments' => $audit->documentReviews,
+            'documents' => $documents,
+            'users' => $users,
+        ]);
     }
 
     /**

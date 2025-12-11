@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('documents', DocumentController::class);
     Route::resource('audit-types', AuditTypeController::class);
     Route::resource('audits', AuditController::class);
+    Route::resource('audit-document-reviews', \App\Http\Controllers\AuditDocumentReviewController::class)->only(['store', 'update', 'destroy']);
+
 
     // Document Versions
     Route::get('documents/{document}/versions', [App\Http\Controllers\DocumentVersionController::class, 'index'])->name('documents.versions.index');

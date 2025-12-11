@@ -5,7 +5,7 @@ import { BreadcrumbItem, Audit, AuditType } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Combobox } from "@/components/ui/combobox";
 import { Head, router, useForm } from "@inertiajs/react";
 import { Loader2 } from "lucide-react";
 
@@ -82,22 +82,14 @@ export default function Edit({ audit, auditTypes }: EditProps) {
                                 {/* Audit Type */}
                                 <div className="flex flex-col gap-1">
                                     <Label htmlFor="audit_type_id">Audit Type</Label>
-                                    <Select
+                                    <Combobox
+                                        options={auditTypes.map((type) => ({ label: type.name, value: String(type.id) }))}
                                         value={data.audit_type_id}
-                                        onValueChange={(value) => setData("audit_type_id", value)}
+                                        onChange={(value) => setData("audit_type_id", value)}
                                         disabled={processing}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select an audit type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {auditTypes.map((type) => (
-                                                <SelectItem key={type.id} value={String(type.id)}>
-                                                    {type.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        placeholder="Select an audit type"
+                                        searchPlaceholder="Search audit type..."
+                                    />
                                     {errors.audit_type_id && (
                                         <p className="text-sm text-red-500">{errors.audit_type_id}</p>
                                     )}

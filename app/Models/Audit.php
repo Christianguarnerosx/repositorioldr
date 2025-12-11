@@ -15,4 +15,9 @@ class Audit extends Model
     {
         return $this->belongsTo(AuditType::class);
     }
+
+    public function documentReviews()
+    {
+        return $this->hasMany(AuditDocumentReview::class);
+    }
 }

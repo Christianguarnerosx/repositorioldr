@@ -4,7 +4,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { PageProps, type BreadcrumbItem, Audit } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, Eye } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -54,11 +54,16 @@ export default function Index() {
                 const audit = row.original;
                 return (
                     <div className="flex gap-2">
-                        <Link href={route('audits.edit', audit.id)}>
-                            <Button size="sm" variant="default">
+                        <Button size="sm" variant="outline" asChild>
+                            <Link href={route('audits.show', audit.id)}>
+                                <Eye className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                        <Button size="sm" variant="default" asChild>
+                            <Link href={route('audits.edit', audit.id)}>
                                 <Pencil className="h-4 w-4" />
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                         <AlertDialog open={recordIdToDelete === audit.id} onOpenChange={(open) => !open && setRecordIdToDelete(null)}>
                             <AlertDialogTrigger asChild>
                                 <Button
