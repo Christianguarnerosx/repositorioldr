@@ -22,6 +22,13 @@ class User extends Authenticatable
         return $this->hasMany(DocumentVersion::class, 'uploaded_by');
     }
 
+    public function assignedDocuments()
+    {
+        return $this->belongsToMany(Document::class, 'document_user')
+            ->withPivot('can_edit', 'assigned_by', 'notified_at')
+            ->withTimestamps();
+    }
+
     /**
      * The attributes that are mass assignable.
      *

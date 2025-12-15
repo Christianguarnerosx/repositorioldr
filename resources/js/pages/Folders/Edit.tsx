@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Combobox } from "@/components/ui/combobox";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem } from "@/types";
 import { Head, router, useForm } from "@inertiajs/react";
@@ -116,25 +116,18 @@ export default function Edit({ folder, companies, departments, areas, folders }:
                                 {/* Aqui estan los campos */}
                                 <div className="flex flex-col gap-1 mt-5">
                                     <Label htmlFor="company_id">Empresa</Label>
-                                    <Select
+                                    <Combobox
+                                        options={companies.map(c => ({ label: c.name, value: String(c.id) }))}
                                         value={data.company_id}
-                                        onValueChange={(value) => {
+                                        onChange={(value) => {
                                             setData("company_id", value);
                                             setData("department_id", "");
                                         }}
+                                        placeholder="Selecciona una empresa"
+                                        searchPlaceholder="Buscar empresa..."
+                                        emptyMessage="No se encontró la empresa."
                                         disabled={processing}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Selecciona una empresa"></SelectValue>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {companies.map((c) => (
-                                                <SelectItem key={c.id} value={String(c.id)}>
-                                                    {c.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    />
                                     {errors.company_id && (
                                         <p className="text-red-500 text-sm">{errors.company_id}</p>
                                     )}
@@ -142,22 +135,15 @@ export default function Edit({ folder, companies, departments, areas, folders }:
 
                                 <div className="flex flex-col gap-1 mt-3">
                                     <Label htmlFor="department_id">Departamento</Label>
-                                    <Select
+                                    <Combobox
+                                        options={filteredDepartments.map(d => ({ label: d.name, value: String(d.id) }))}
                                         value={data.department_id}
-                                        onValueChange={(value) => setData("department_id", value)}
+                                        onChange={(value) => setData("department_id", value)}
+                                        placeholder="Selecciona un departamento"
+                                        searchPlaceholder="Buscar departamento..."
+                                        emptyMessage="No se encontró el departamento."
                                         disabled={!data.company_id || processing}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Selecciona un departamento"></SelectValue>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {filteredDepartments.map((d) => (
-                                                <SelectItem key={d.id} value={String(d.id)}>
-                                                    {d.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    />
                                     {errors.department_id && (
                                         <p className="text-red-500 text-sm">{errors.department_id}</p>
                                     )}
@@ -165,22 +151,15 @@ export default function Edit({ folder, companies, departments, areas, folders }:
 
                                 <div className="flex flex-col gap-1 mt-3">
                                     <Label htmlFor="area_id">Area</Label>
-                                    <Select
+                                    <Combobox
+                                        options={filteredAreas.map(a => ({ label: a.name, value: String(a.id) }))}
                                         value={data.area_id}
-                                        onValueChange={(value) => setData("area_id", value)}
+                                        onChange={(value) => setData("area_id", value)}
+                                        placeholder="Selecciona un area"
+                                        searchPlaceholder="Buscar area..."
+                                        emptyMessage="No se encontró el area."
                                         disabled={!data.department_id || processing}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Selecciona un area"></SelectValue>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {filteredAreas.map((a) => (
-                                                <SelectItem key={a.id} value={String(a.id)}>
-                                                    {a.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    />
                                     {errors.area_id && (
                                         <p className="text-red-500 text-sm">{errors.area_id}</p>
                                     )}
@@ -189,24 +168,17 @@ export default function Edit({ folder, companies, departments, areas, folders }:
                                 {/* Aqui estaran los folders padre */}
                                 <div className="flex flex-col gap-1 mt-3">
                                     <Label htmlFor="parent_folder_id">Folder padre (Opcional)</Label>
-                                    <Select
+                                    <Combobox
+                                        options={folders
+                                            .filter(f => f.id !== folder.id)
+                                            .map(f => ({ label: f.name, value: String(f.id) }))}
                                         value={data.parent_folder_id ? String(data.parent_folder_id) : ""}
-                                        onValueChange={(value) => setData("parent_folder_id", value)}
+                                        onChange={(value) => setData("parent_folder_id", value)}
+                                        placeholder="Selecciona un folder"
+                                        searchPlaceholder="Buscar folder..."
+                                        emptyMessage="No se encontró el folder."
                                         disabled={processing}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Selecciona un folder" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {folders
-                                                .filter(f => f.id !== folder.id) // Exclude current folder
-                                                .map((f) => (
-                                                    <SelectItem key={f.id} value={String(f.id)}>
-                                                        {f.name}
-                                                    </SelectItem>
-                                                ))}
-                                        </SelectContent>
-                                    </Select>
+                                    />
                                     {errors.parent_folder_id && (
                                         <p className="text-red-500 text-sm">{errors.parent_folder_id}</p>
                                     )}

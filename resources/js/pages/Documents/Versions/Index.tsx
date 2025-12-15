@@ -4,6 +4,7 @@ import { BreadcrumbItem, PageProps } from "@/types";
 import { Head, Link, useForm, usePage, router } from "@inertiajs/react";
 import { Download, FileText, Upload, Pencil, Trash2 } from "lucide-react";
 import { FormEventHandler, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -147,48 +148,67 @@ export default function VersionsIndex() {
 
                 <div className="grid gap-4">
                     {versions.map((version) => (
-                        <div key={version.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
-                            <div className="flex items-start gap-4">
-                                <div className="p-2 bg-blue-50 rounded-full">
-                                    <FileText className="h-6 w-6 text-blue-500" />
-                                </div>
-                                <div>
-                                    <p className="font-medium">Version uploaded on {new Date(version.created_at).toLocaleString()}</p>
-                                    <p className="text-sm text-gray-500">By {version.uploader?.name ?? 'Unknown'}</p>
-                                    {version.notes && (
-                                        <p className="text-sm mt-1 bg-gray-50 p-2 rounded">{version.notes}</p>
-                                    )}
-                                    <div className="flex gap-4 mt-1 text-xs text-gray-400">
-                                        <span>Size: {(version.size / 1024).toFixed(2)} KB</span>
-                                        <span>Type: {version.mime_type}</span>
+                        <Card key={version.id}>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-blue-50 rounded-full">
+                                            <FileText className="h-5 w-5 text-blue-500" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-base">
+                                                Version {version.id}
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Uploaded on {new Date(version.created_at).toLocaleString()} by {version.uploader?.name ?? 'Unknown'}
+                                            </CardDescription>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={() => {
+                                            setEditingVersion(version);
+                                            setEditNotes(version.notes || '');
+                                        }}>
+                                            <Pencil className="h-4 w-4 mr-2" />
+                                            Edit Note
+                                        </Button>
+                                        <a href={route('document-versions.download', version.id)} target="_blank" rel="noreferrer">
+                                            <Button variant="outline" size="sm">
+                                                <Download className="h-4 w-4 mr-2" />
+                                                Download
+                                            </Button>
+                                        </a>
+                                        <Button
+                                            size="sm"
+                                            variant="destructive"
+                                            onClick={() => setRecordIdToDelete(version.id)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => {
-                                        setEditingVersion(version);
-                                        setEditNotes(version.notes || '');
-                                    }}>
-                                        <Pencil className="h-4 w-4 mr-2" />
-                                        Edit Note
-                                    </Button>
-                                    <a href={route('document-versions.download', version.id)} target="_blank" rel="noreferrer">
-                                        <Button variant="outline" size="sm">
-                                            <Download className="h-4 w-4 mr-2" />
-                                            Download
-                                        </Button>
-                                    </a>
-                                    <Button
-                                        size="sm"
-                                        variant="destructive"
-                                        onClick={() => setRecordIdToDelete(version.id)}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                            </CardHeader>
+                            {version.notes && (
+                                <CardContent>
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-medium">Notes:</p>
+                                        <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                                            {version.notes}
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            )}
+                            <CardContent className={version.notes ? "pt-0" : ""}>
+                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                        <span className="font-medium">Size:</span> {(version.size / 1024).toFixed(2)} KB
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <span className="font-medium">Type:</span> {version.mime_type}
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
+                            </CardContent>
+                        </Card>
                     ))}
 
                     <Dialog open={!!editingVersion} onOpenChange={(open) => !open && setEditingVersion(null)}>

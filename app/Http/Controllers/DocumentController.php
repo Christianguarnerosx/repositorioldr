@@ -101,9 +101,15 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Document $document)
     {
-        // 
+        $document->load(['assignedUsers', 'versions', 'folder', 'user']);
+        $users = \App\Models\User::all();
+        
+        return Inertia::render('Documents/Show', [
+            'document' => $document,
+            'users' => $users,
+        ]);
     }
 
     /**
@@ -156,5 +162,91 @@ class DocumentController extends Controller
                 ->back()
                 ->with('error', 'Failed to delete document: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Asignar usuarios a un documento
+     */
+    public function asignarUsuarios(Request $request, Document $document)
+    {
+        try {
+            $validated = $request->validate([
+                'user_ids' => 'required|array',
+                'user_ids.*' => 'exists:users,id',
+                'can_edit' => 'boolean',
+            ]);
+
+            $syncData = [];
+            foreach ($validated['user_ids'] as $userId) {
+                $syncData[$userId] = [
+                    'can_edit' => $validated['can_edit'] ?? false,
+                    'assigned_by' => auth()->id(),
+                    'notified_at' => now(),
+                ];
+            }
+
+            $document->assignedUsers()->syncWithoutDetaching($syncData);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Usuarios asignados correctamente.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Error al asignar usuarios: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Remover usuario asignado de un documento
+     */
+    public function removerUsuario(Document $document, \App\Models\User $user)
+    {
+        try {
+            $document->assignedUsers()->detach($user->id);
+
+            return redirect()
+                ->back()
+                ->with('success', 'Usuario removido correctamente.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Error al remover usuario: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Mostrar documentos asignados al usuario loggeado
+     */
+    public function misDocumentos()
+    {
+        $documents = auth()->user()->assignedDocuments()
+            ->with(['folder', 'user', 'versions' => function ($query) {
+                $query->latest();
+            }])
+            ->paginate(9);
+
+        $documents->setCollection(
+            $documents->getCollection()->transform(function ($document) {
+                $latestVersion = $document->versions->first();
+                return [
+                    'id' => $document->id,
+                    'name' => $document->name,
+                    'parent_folder_name' => $document->folder?->name ?? 'Ninguno',
+                    'user_name' => $document->user?->name ?? 'N/A',
+                    'file_name' => $latestVersion?->file_name ?? '',
+                    'size' => $latestVersion?->size ?? 0,
+                    'mime_type' => $latestVersion?->mime_type ?? '',
+                    'version_count' => $document->versions->count(),
+                    'created_at' => $document->created_at,
+                    'updated_at' => $document->updated_at,
+                    // Pivot data
+                    'can_edit' => $document->pivot->can_edit,
+                    'assigned_at' => $document->pivot->created_at,
+                ];
+            })
+        );
+
+        return Inertia::render('Documents/MisDocumentos', ['documents' => $documents]);
     }
 }

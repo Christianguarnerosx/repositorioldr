@@ -29,4 +29,11 @@ class Document extends Model
     {
         return $this->hasMany(DocumentVersion::class);
     }
+
+    public function assignedUsers()
+    {
+        return $this->belongsToMany(User::class, 'document_user')
+            ->withPivot('can_edit', 'assigned_by', 'notified_at')
+            ->withTimestamps();
+    }
 }

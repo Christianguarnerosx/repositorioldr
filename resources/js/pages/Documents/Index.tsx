@@ -4,7 +4,7 @@ import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem, PageProps } from "@/types";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -81,6 +81,11 @@ export default function Index() {
                 const document = row.original;
                 return (
                     <div className="flex gap-2">
+                         <Link href={route('documents.show', document.id)}>
+                            <Button size="sm" variant="outline" title="Ver Detalles">
+                                <Eye className="h-4 w-4" />
+                            </Button>
+                        </Link>
                          <Link href={route('documents.versions.index', document.id)}>
                             <Button size="sm" variant="outline" title="View Versions">
                                 Versions

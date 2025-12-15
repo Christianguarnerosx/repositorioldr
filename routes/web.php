@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\AuditTypeController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\HallazgosController;
+use App\Http\Controllers\FindingTypeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('audit-types', AuditTypeController::class);
     Route::resource('audits', AuditController::class);
     Route::resource('hallazgos', HallazgosController::class);
+    Route::resource('finding-types', FindingTypeController::class);
     Route::resource('audit-document-reviews', \App\Http\Controllers\AuditDocumentReviewController::class)->only(['store', 'update', 'destroy']);
 
 
@@ -37,6 +39,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('document-versions/{version}/download', [App\Http\Controllers\DocumentVersionController::class, 'download'])->name('document-versions.download');
     Route::put('document-versions/{version}', [App\Http\Controllers\DocumentVersionController::class, 'update'])->name('documents.versions.update');
     Route::delete('document-versions/{version}', [App\Http\Controllers\DocumentVersionController::class, 'destroy'])->name('documents.versions.destroy');
+
+    // Document User Assignment
+    Route::get('mis-documentos', [DocumentController::class, 'misDocumentos'])->name('documents.my-documents');
+    Route::post('documents/{document}/assign-users', [DocumentController::class, 'asignarUsuarios'])->name('documents.assign-users');
+    Route::delete('documents/{document}/users/{user}', [DocumentController::class, 'removerUsuario'])->name('documents.remove-user');
 });
 
 require __DIR__ . '/settings.php';
