@@ -3,6 +3,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Folder } from 'lucide-react';
 import { FileManagerItem } from '@/components/file-manager-item';
+import { FloatingSearch } from '@/components/floating-search';
 
 interface Item {
     id: number;
@@ -31,6 +32,8 @@ export default function Dashboard({ items, currentFolder, breadcrumbsProps }: Da
     return (
         <AppLayout breadcrumbs={breadcrumbsProps}>
             <Head title="Inicio" />
+
+            <FloatingSearch />
 
             <div className="p-6">
                 <div className="flex items-center justify-between mb-8">

@@ -9,6 +9,7 @@ use App\Http\Controllers\AuditTypeController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\HallazgosController;
 use App\Http\Controllers\FindingTypeController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,6 +19,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('search', [SearchController::class, 'search'])->name('search');
 
     Route::resource('companies', CompanyController::class);
     Route::resource('departments', DepartmentController::class);
