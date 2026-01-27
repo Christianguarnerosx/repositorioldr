@@ -10,44 +10,44 @@ import AppLogo from './app-logo';
 // Aqui se crean los menus
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Panel de Control',
         href: '/dashboard',
         icon: LayoutGrid,
     },
     {
-        title: 'Companies',
+        title: 'Empresas',
         href: '/companies',
         icon: Building,
     },
     {
-        title: 'Departments',
+        title: 'Departamentos',
         href: '/departments',
         icon: Puzzle,
     },
     {
-        title: 'Areas',
+        title: 'Áreas',
         href: '/areas',
         icon: Grid2x2,
     },
     {
-        title: 'Folders',
+        title: 'Carpetas',
         href: '/folders',
         icon: Folder,
     },
     {
-        title: 'Documents',
+        title: 'Documentos',
         href: '/documents',
         icon: Files,
     },
     {
-        title: 'Audit Types',
+        title: 'Tipos de Auditoría',
         href: '/audit-types',
-        icon: ClipboardList, 
+        icon: ClipboardList,
     },
     {
-        title: 'Audits',
+        title: 'Auditorías',
         href: '/audits',
-        icon: ClipboardCheck, 
+        icon: ClipboardCheck,
     },
     {
         title: 'Hallazgos',
@@ -63,12 +63,12 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
+        title: 'Repositorio',
         href: 'https://github.com/Christianguarnerosx/repositorioldr.git',
         icon: Folder,
     },
     {
-        title: 'Documentation',
+        title: 'Documentación',
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
     },
