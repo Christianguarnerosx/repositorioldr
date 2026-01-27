@@ -15,6 +15,16 @@ class Document extends Model
         'user_id',
     ];
 
+    public function scopeRoot($query)
+    {
+        return $query->whereNull('folder_id');
+    }
+
+    public function scopeInFolder($query, $folderId)
+    {
+        return $query->where('folder_id', $folderId);
+    }
+
     public function folder()
     {
         return $this->belongsTo(Folder::class);

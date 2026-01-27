@@ -15,6 +15,16 @@ class Folder extends Model
         'area_id'
     ];
 
+    public function scopeRoot($query)
+    {
+        return $query->whereNull('parent_folder_id');
+    }
+
+    public function scopeInFolder($query, $folderId)
+    {
+        return $query->where('parent_folder_id', $folderId);
+    }
+
     public function parentFolder()
     {
         return $this->belongsTo(Folder::class, 'parent_folder_id');
